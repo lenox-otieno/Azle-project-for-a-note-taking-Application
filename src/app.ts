@@ -7,7 +7,7 @@ app.use(azle.json());
 interface Note {
   id: number;
   title: string;
-  content: string;
+  content?: string; // Make content optional
 }
 
 let notes: Note[] = [];
@@ -18,7 +18,7 @@ app.get('/notes', (req, res) => {
 });
 
 app.post('/notes', (req, res) => {
-  const { title, content } = req.body;
+  const { title, content }: { title: string; content?: string } = req.body; // Type the request body
   if (!title || !content) {
     res.status(400).json({ error: 'Title and content are required' });
     return;
@@ -36,10 +36,10 @@ app.post('/notes', (req, res) => {
 });
 
 app.delete('/notes/:id', (req, res) => {
-  const noteId = parseInt(req.params.id, 10);
-  const noteIndex = notes.findIndex((note) => note.id === noteId);
+  const noteId: number = parseInt(req.params.id, 10);
+  const noteIndex: number = notes.findIndex((note) => note.id === noteId);
 
-  if (noteIndex === -1) {
+  if (noteIndex < 0) {
     res.status(404).json({ error: 'Note not found' });
     return;
   }
@@ -49,8 +49,9 @@ app.delete('/notes/:id', (req, res) => {
   res.json({ message: 'Note deleted successfully' });
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT: number = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
+    
